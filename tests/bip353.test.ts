@@ -9,20 +9,38 @@ const silentpayment = "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdg
 
 describe("BIP353", () => {
     it("should encode all as string", () => {
-        const result = Bip353.encode({
+        const result = Bip353.create({
+            username: "test",
+            domain: "test.com",
             bitcoin: bitcoin,
             bolt12: bolt12,
             silentpayment: silentpayment
         });
         const expected = `bitcoin:${bitcoin}?lno=${bolt12}&sp=${silentpayment}`
-        expect(result).toBe(expected);
+        expect(result.uri).toBe(expected);
     });
 
     it("should encode partials as string", () => {
-        const result = Bip353.encode({
+        const result = Bip353.create({
+            username: "test",
+            domain: "test.com",
             bolt12: bolt12,
         });
         const expected = `bitcoin:?lno=${bolt12}`
-        expect(result).toBe(expected);
+        expect(result.uri).toBe(expected);
+    });
+
+    it("should encode dns record", () => {
+        const result = Bip353.create({
+            username: "test",
+            domain: "test.com",
+            bitcoin: bitcoin,
+            bolt12: bolt12,
+        });
+        expect(result.dnsRecord).toEqual({
+            type: "TXT",
+            name: "test.user._bitcoin-payment.test.com",
+            content: `"bitcoin:${bitcoin}?lno=${bolt12}"`
+        });
     });
 });

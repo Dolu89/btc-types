@@ -1,14 +1,42 @@
+type Bip353Params = {
+    username: string,
+    domain: string,
+    bitcoin?: string,
+    bolt12?: string,
+    silentpayment?: string
+}
+
 export class Bip353 {
 
-    static encode({ bitcoin, bolt12, silentpayment }: { bitcoin?: string, bolt12?: string, silentpayment?: string }) {
+    private constructor(
+        private readonly username: string,
+        private readonly domain: string,
+        private readonly bitcoin?: string,
+        private readonly bolt12?: string,
+        private readonly silentpayment?: string
+    ) { }
+
+    static create({ username, domain, bitcoin, bolt12, silentpayment }: Bip353Params) {
+        return new Bip353(username, domain, bitcoin, bolt12, silentpayment)
+    }
+
+    get uri() {
         const params = new URLSearchParams()
-        if (bolt12) {
-            params.set("lno", bolt12)
+        if (this.bolt12) {
+            params.set("lno", this.bolt12)
         }
-        if (silentpayment) {
-            params.set("sp", silentpayment)
+        if (this.silentpayment) {
+            params.set("sp", this.silentpayment)
         }
-        return `bitcoin:${bitcoin ? bitcoin : ""}?${params.toString()}`
+        return `bitcoin:${this.bitcoin ? this.bitcoin : ""}?${params.toString()}`
+    }
+
+    get dnsRecord() {
+        return {
+            type: "TXT",
+            name: `${this.username}.user._bitcoin-payment.${this.domain}`,
+            content: `"${this.uri}"`
+        }
     }
 
 }

@@ -53,25 +53,39 @@ console.log(invoice.isExpired);       // Boolean: is the invoice expired?
 
 ### BIP353 
 
-Create unified Bitcoin payment URIs supporting multiple payment methods (BIP353):
+Create human-readable Bitcoin payment addresses with DNS support (BIP353):
 
 ```typescript
 import { Bip353 } from '@dolu/btc-types';
 
-// Encode with all payment methods
-const uri = Bip353.encode({
+// Create a BIP353 payment address with all payment methods
+const payment = Bip353.create({
+    username: "alice",
+    domain: "example.com",
     bitcoin: "bc1qztwy6xen3zdtt7z0vrgapmjtfz8acjkfp5fp7l",
     bolt12: "lno1zr5qyugqgskrk70kqmuq7v3dnr2fnmhukps9n8hut48vkqpqnskt2svsqwjakp7k6pyhtkuxw7y2kqmsxlwruhzqv0zsnhh9q3t9xhx39suc6qsr07ekm5esdyum0w66mnx8vdquwvp7dp5jp7j3v5cp6aj0w329fnkqqv60q96sz5nkrc5r95qffx002q53tqdk8x9m2tmt85jtpmcycvfnrpx3lr45h2g7na3sec7xguctfzzcm8jjqtj5ya27te60j03vpt0vq9tm2n9yxl2hngfnmygesa25s4u4zlxewqpvp94xt7rur4rhxunwkthk9vly3lm5hh0pqv4aymcqejlgssnlpzwlggykkajp7yjs5jvr2agkyypcdlj280cy46jpynsezrcj2kwa2lyr8xvd6lfkph4xrxtk2xc3lpq",
     silentpayment: "sp1qqgste7k9hx0qftg6qmwlkqtwuy6cycyavzmzj85c6qdfhjdpdjtdgqjuexzk6murw56suy3e0rd2cgqvycxttddwsvgxe2usfpxumr70xc9pkqwv"
 });
-console.log(uri); 
+
+// Get the Bitcoin payment URI
+console.log(payment.uri);
 // Output: bitcoin:bc1qztwy6xen3zdtt7z0vrgapmjtfz8acjkfp5fp7l?lno=lno1zr5qyugq...&sp=sp1qqgste7k9hx0q...
 
-// Encode with partial payment methods
-const lightningOnly = Bip353.encode({
+// Get DNS record information for setting up the address
+console.log(payment.dnsRecord);
+// Output: {
+//   type: "TXT",
+//   name: "alice.user._bitcoin-payment.example.com", 
+//   content: '"bitcoin:bc1qztwy6xen3zdtt7z0vrgapmjtfz8acjkfp5fp7l?lno=lno1zr5qyugq...&sp=sp1qqgste7k9hx0q..."'
+// }
+
+// Create with partial payment methods (Lightning only)
+const lightningOnly = Bip353.create({
+    username: "bob",
+    domain: "lightning.com",
     bolt12: "lno1zr5qyugq..."
 });
-console.log(lightningOnly);
+console.log(lightningOnly.uri);
 // Output: bitcoin:?lno=lno1zr5qyugq...
 ```
 
@@ -99,17 +113,29 @@ console.log(lightningOnly);
 
 ### Bip353
 
-| Method | Description | Returns |
-|--------|-------------|---------|
-| `Bip353.encode(options)` | Create unified Bitcoin payment URI | `string` |
+| Method/Property | Description | Returns |
+|-----------------|-------------|---------|
+| `Bip353.create(params)` | Create BIP353 payment address | `Bip353` |
+| `payment.uri` | Get Bitcoin payment URI | `string` |
+| `payment.dnsRecord` | Get DNS TXT record configuration | `object` |
 
-**Options for `Bip353.encode()`:**
+**Parameters for `Bip353.create()`:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
+| `username` | `string` | Yes | Username for the payment address |
+| `domain` | `string` | Yes | Domain for the payment address |
 | `bitcoin` | `string` | No | Bitcoin address (legacy, segwit, or taproot) |
 | `bolt12` | `string` | No | Lightning BOLT12 offer string |
 | `silentpayment` | `string` | No | Silent payment address |
+
+**DNS Record Object:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `type` | `string` | Always "TXT" |
+| `name` | `string` | DNS record name (`username.user._bitcoin-payment.domain`) |
+| `content` | `string` | DNS record content (quoted Bitcoin URI) |
 
 ## 🛠️ Development
 
