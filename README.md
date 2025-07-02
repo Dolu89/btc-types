@@ -1,4 +1,4 @@
-# 🪙 btc-types
+# ₿ btc-types
 
 A TypeScript library providing type-safe utilities for Bitcoin and Lightning Network operations.
 

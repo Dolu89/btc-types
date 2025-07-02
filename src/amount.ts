@@ -1,23 +1,23 @@
 export class Amount {
-    readonly #mSat: number = 0
+	private readonly _mSat: number
 
-    get mSat() {
-        return this.#mSat
-    }
+	constructor(mSat: number) {
+		this._mSat = mSat
+	}
 
-    get sat() {
-        return this.#mSat / 1000
-    }
+	get mSat(): number {
+		return this._mSat
+	}
 
-    private constructor(mSat: number) {
-        this.#mSat = mSat
-    }
+	get sat(): number {
+		return this._mSat / 1000
+	}
 
-    static fromSatoshi(satoshi: number) {
-        return new Amount(satoshi * 1000)
-    }
+	static fromSatoshi(satoshi: number): Amount {
+		return new Amount(satoshi * 1000)
+	}
 
-    static fromMilliSatoshi(mSat: number) {
-        return new Amount(mSat)
-    }
+	static fromMilliSatoshi(mSat: number): Amount {
+		return new Amount(mSat)
+	}
 }
