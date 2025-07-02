@@ -1,4 +1,4 @@
-import { Amount } from './amount'
+import { Amount } from './amount.js'
 import { decode } from 'light-bolt11-decoder'
 import type { DecodedInvoice } from 'light-bolt11-decoder'
 
