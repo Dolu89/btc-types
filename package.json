@@ -1,0 +1,32 @@
+{
+  "name": "@dolu/btc-types",
+  "version": "0.0.1",
+  "description": "A collection of types for Bitcoin and Lightning",
+  "author": {
+    "name": "Dolu"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prebuild": "bun run clean",
+    "test": "bun test",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "light-bolt11-decoder": "^3.2.0"
+  }
+}
